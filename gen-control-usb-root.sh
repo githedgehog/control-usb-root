@@ -8,7 +8,6 @@
 
 FLATCAR_BASE_URL="https://stable.release.flatcar-linux.net/amd64-usr"
 FLATCAR_VER="${1:-"3815.2.5"}"
-OUTPUT_DIR_NAME="control-usb-root"
 GRUB_INST_CMD="grub-install"
 GPG_KEY="-----BEGIN PGP PUBLIC KEY BLOCK-----
 
@@ -417,8 +416,6 @@ menuentry 'Flatcar-live-media' --class gnu-linux --class gnu --class os {
 }
 
 
-mkdir $OUTPUT_DIR_NAME
-pushd $OUTPUT_DIR_NAME || exit 2
 init_gpg
 # We use flatcar cpio.gz and vmlinuz files for our boot media
 download_flatcar_files "$FLATCAR_VER"
@@ -428,14 +425,15 @@ download_flatcar_files "$FLATCAR_VER"
 if ! sudo $GRUB_INST_CMD --removable --efi-directory="." --boot-directory="./boot" --target=x86_64-efi --force
 then
 	echo "Grub Install failed"
-	exit 3
+	exit 2
 fi
 
 mk_stub_grub_cfg
 mk_grub_cfg
 
-echo "Done, files in $OUTPUT_DIR_NAME "
+echo "Finished Creating"
 
+echo "Cleaning"
 cleanup "$GNUPGHOME"
 exit 0
 
