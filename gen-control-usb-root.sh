@@ -418,7 +418,7 @@ menuentry 'Flatcar-live-media' --class gnu-linux --class gnu --class os {
 
 
 mkdir $OUTPUT_DIR_NAME
-pushd $OUTPUT_DIR_NAME || exit
+pushd $OUTPUT_DIR_NAME || exit 2
 init_gpg
 # We use flatcar cpio.gz and vmlinuz files for our boot media
 download_flatcar_files "$FLATCAR_VER"
@@ -428,7 +428,7 @@ download_flatcar_files "$FLATCAR_VER"
 if ! sudo $GRUB_INST_CMD --removable --efi-directory="." --boot-directory="./boot" --target=x86_64-efi --force
 then
 	echo "Grub Install failed"
-	exit 2
+	exit 3
 fi
 
 mk_stub_grub_cfg
