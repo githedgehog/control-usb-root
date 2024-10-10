@@ -29,6 +29,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Just
+        uses: extractions/setup-just@v2
+
       - name: Build
         run: |
           just --timestamp build
