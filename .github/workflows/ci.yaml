@@ -32,6 +32,11 @@ jobs:
       - name: Setup Just
         uses: extractions/setup-just@v2
 
+      - name: Setup Oras
+        uses: oras-project/setup-oras@v1
+        with:
+          version: 1.2.0
+
       - name: Build
         run: |
           just --timestamp build
