@@ -7,7 +7,7 @@
 
 
 FLATCAR_BASE_URL="https://stable.release.flatcar-linux.net/amd64-usr"
-FLATCAR_VER="${1:-"3815.2.5"}"
+FLATCAR_VER="${1:-"4081.2.0"}"
 GRUB_INST_CMD="grub-install"
 GPG_KEY="-----BEGIN PGP PUBLIC KEY BLOCK-----
 
