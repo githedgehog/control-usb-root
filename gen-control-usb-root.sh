@@ -4,10 +4,12 @@
 
 
 # This script assumes it is being run in Ubuntu
-
+# To update flacar image run this script supplying the verison you want
+# To update the images/efi.img file for some reason pass a valid flatcar version followed by a 1.
 
 FLATCAR_BASE_URL="https://stable.release.flatcar-linux.net/amd64-usr"
 FLATCAR_VER="${1:-"4081.2.0"}"
+CREATE_EFI_IMG="${2:-0}"
 GRUB_INST_CMD="grub-install"
 GPG_KEY="-----BEGIN PGP PUBLIC KEY BLOCK-----
 
@@ -363,9 +365,7 @@ function download_flatcar_files {
 			exit 1
 		fi
 	done
-
-
-
+	
 }
 
 function init_gpg {
@@ -415,8 +415,41 @@ menuentry 'Flatcar-live-media' --class gnu-linux --class gnu --class os {
 
 }
 
+# This function generates a small efi.img file. This small file is an esp boot image
+# We take this esp boot image and supply it as the boot path for the el-torio iso image
+# This grub command makes an image as opposed to installing grub into a file tree
+#
+function efi_img_iso9660 {
+
+	local BOOT_IMG_DATA="./wip-dir"
+	local BOOT_IMG="images/efi.img"
+
+	mkdir -p $BOOT_IMG_DATA
+	mkdir -p $(dirname $BOOT_IMG)
+
+	truncate -s 8M $BOOT_IMG
+	mkfs.vfat $BOOT_IMG
+	mount $BOOT_IMG $BOOT_IMG_DATA
+	mkdir -p $BOOT_IMG_DATA/efi/boot
+
+	grub-mkimage \
+	-C xz \
+	-O x86_64-efi \
+	-p /boot/grub \
+	-o $BOOT_IMG_DATA/efi/boot/bootx64.efi \
+	boot linux search normal configfile \
+	part_gpt btrfs ext2 fat iso9660 loopback \
+	test keystatus gfxmenu regexp probe \
+	efi_gop efi_uga all_video gfxterm font \
+	echo read ls cat png jpeg halt reboot
+
+	umount $BOOT_IMG_DATA
+	rm -rf $BOOT_IMG_DATA
+
+}
 
 init_gpg
+
 # We use flatcar cpio.gz and vmlinuz files for our boot media
 download_flatcar_files "$FLATCAR_VER"
 
@@ -430,6 +463,12 @@ fi
 
 mk_stub_grub_cfg
 mk_grub_cfg
+
+if [ $CREATE_EFI_IMG -eq 1 ]; then
+	echo "Creating images/efi.img"
+	efi_img_iso9660
+fi
+
 
 echo "Finished Creating"
 
