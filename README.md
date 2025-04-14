@@ -8,13 +8,15 @@ our images. Vlab VMs, control node, and gateway node.
 The flatcar version number is saved in two files, `justfile` and the
 `gen-control-usb-root.sh`. Keep them updated and matching.
 
-1. Get the desired stable release number from [their stable
+1. Select the desired stable release number from [their stable
    releases](https://stable.release.flatcar-linux.net/amd64-usr/) for example
 `4152.2.2`
-1. `just build  4152.2.2`
-1. `just push `
+1. edit the `justfile` to include the selected relase, e.g. `4152.2.2`
+1. edit the `gen-control-usb-root.sh` to include the selected release
 1. `git tag -s v4152.2.2-hh1 -m 'bumping flatcar'`
 1. `git push origin v4152.2.2-hh1`
+1. The CI is setup to run `just push` so that the artifacts are generated and
+   sent to oras
 
 
 ## Notes
