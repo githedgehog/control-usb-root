@@ -15,8 +15,12 @@ The flatcar version number is saved in two files, `justfile` and the
 1. edit the `gen-control-usb-root.sh` to include the selected release
 1. `git tag -s v4152.2.2-hh1 -m 'bumping flatcar'`
 1. `git push origin v4152.2.2-hh1`
-1. The CI is setup to run `just push` so that the artifacts are generated and
-   sent to oras
+1. The CI is setup to run `just push` after a tag has been pushed so that 
+   the artifacts are generated and sent to oras
+1. go to the fabricator repo and update the existing tag to the tag pushed in
+   the previous step. At the time of writing it is in 3 places, across two
+   files. `pkg/fab/README.md` and `pkg/fab/versions.go`. The real test is to
+   run `just test` inside of fabricator to ensure all locations are in sync.
 
 
 ## Notes
