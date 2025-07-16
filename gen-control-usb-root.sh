@@ -442,6 +442,9 @@ function mk_grub_cfg {
 	sudo printf "set default=0
 set timeout=5
 set timeout_style=menu
+set gfxpayload=keep
+insmod all_video
+
 menuentry 'Flatcar-live-media' --class gnu-linux --class gnu --class os {
 	linux /flatcar_production_pxe.vmlinuz flatcar.autologin flatcar.first_boot=1 console=ttyS0,115200n8 console=tty0
 	initrd /flatcar_production_pxe_image.cpio.gz /oem.cpio.gz
@@ -472,11 +475,11 @@ function efi_img_iso9660 {
 	-O x86_64-efi \
 	-p /boot/grub \
 	-o $BOOT_IMG_DATA/efi/boot/bootx64.efi \
-	boot linux search normal configfile \
-	part_gpt btrfs ext2 fat iso9660 loopback \
-	test keystatus gfxmenu regexp probe \
-	efi_gop efi_uga all_video gfxterm font \
-	echo read ls cat png jpeg halt reboot
+	normal search test fat part_gpt search_fs_uuid boot reboot probe \
+	xzio search search_label terminal configfile memdisk tar echo normal \
+	read btrfs serial linux efi_gop efi_uga efinet pgp http tftp tpm all_video \
+	fixvideo all_video gfxterm gfxmenu ls cat echo ext2 fat iso9660 loopback \
+	halt reboot ata
 
 	umount $BOOT_IMG_DATA
 	rm -rf $BOOT_IMG_DATA
