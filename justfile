@@ -19,3 +19,7 @@ build: && version
 # Publish control-usb-root
 push: && version
   oras push ghcr.io/githedgehog/fabricator/control-usb-root:{{version}} boot EFI images flatcar_production_*
+
+
+local-push:
+  oras push --plain-http 127.0.0.1:30000/githedgehog/fabricator/control-usb-root:v4230.2.1-hh-1 boot EFI images flatcar_production_*

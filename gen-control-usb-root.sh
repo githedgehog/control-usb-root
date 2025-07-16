@@ -9,7 +9,6 @@
 
 FLATCAR_BASE_URL="https://stable.release.flatcar-linux.net/amd64-usr"
 FLATCAR_VER="${1:-"4230.2.1"}"
-CREATE_EFI_IMG="${2:-0}"
 GRUB_INST_CMD="grub-install"
 GPG_KEY="-----BEGIN PGP PUBLIC KEY BLOCK-----
 
@@ -394,7 +393,7 @@ function download_flatcar_files {
 
 	for file in "${files[@]}"
 	do
-		if ! $(gpg --batch --verify "$file.sig" "$file")
+		if ! gpg --batch --verify "$file.sig" "$file"
 		then
 			echo "Signature verification failed for $file"
 			exit 1
@@ -421,19 +420,24 @@ function cleanup {
 }
 
 function mk_stub_grub_cfg {
-	if ! test -f "./EFI/BOOT/grub.cfg"; then
-		sudo touch ./EFI/BOOT/grub.cfg 
-	fi
-	sudo printf '# look for the filesystem by label to use as root device
-search --no-floppy --label HH-LIVE --set=root
+        local output_path=$1
+        sudo printf '# look for the filesystem by label to use as root device
+search --no-floppy --label HH-MEDIA --set=root
 # export this handy prefix so we can find the main grub.cfg
-set prefix=($root)/boot/grub
+set prefix=(${root})/boot/grub
+insmod iso9660
+insmod part_gpt
+insmod part_msdos
+insmod normal
 
 export $prefix
 configfile $prefix/grub.cfg
-'| sudo tee ./EFI/BOOT/grub.cfg > /dev/null
+'| sudo tee "$output_path" > /dev/null
 }
 
+
+
+# If changes to grub timeout, serial console settings, autologin, kernel args, this is the spot for those
 function mk_grub_cfg {
 	if ! test -f "./boot/grub/grub.cfg"; then
 		sudo touch ./boot/grub/grub.cfg 
@@ -454,36 +458,41 @@ menuentry 'Flatcar-live-media' --class gnu-linux --class gnu --class os {
 }
 
 # This function generates a small efi.img file. This small file is an esp boot image
-# We take this esp boot image and supply it as the boot path for the el-torio iso image
-# This grub command makes an image as opposed to installing grub into a file tree
-#
+# We take this esp boot image and supply it as the BootFile for the ElTorito iso image.
+# This grub command makes a fat32 image as opposed to installing grub into a file tree
+# The filepath images/efi.img is important, it is what the iso creation code looks for
 function efi_img_iso9660 {
 
 	local BOOT_IMG_DATA="./wip-dir"
 	local BOOT_IMG="images/efi.img"
-
 	mkdir -p $BOOT_IMG_DATA
-	mkdir -p $(dirname $BOOT_IMG)
+	mkdir -p "$(dirname $BOOT_IMG)"
 
-	truncate -s 8M $BOOT_IMG
-	mkfs.vfat $BOOT_IMG
-	mount $BOOT_IMG $BOOT_IMG_DATA
-	mkdir -p $BOOT_IMG_DATA/efi/boot
 
-	grub-mkimage \
-	-C xz \
-	-O x86_64-efi \
-	-p /boot/grub \
-	-o $BOOT_IMG_DATA/efi/boot/bootx64.efi \
-	boot linux search uhci normal configfile \
-	part_gpt btrfs usb ext2 fixvideo fat cpio iso9660 loopback \
-	test keystatus xzio gfxmenu regexp probe \
-	efi_gop efi_uga all_video gfxterm font \
-	echo read ls cat png jpeg halt reboot
+	# 4096 * 2930 = 12MiB size image, loopback mount it
+	dd if=/dev/zero of=$BOOT_IMG bs=4k count=2930
+	tinyGrubBlk=$(sudo losetup --find --show $BOOT_IMG)
 
-	umount $BOOT_IMG_DATA
-	rm -rf $BOOT_IMG_DATA
+	# Give this image the ESP typecode
+	sudo sgdisk -t 0:ef00 "$tinyGrubBlk"
+	# Format the disk image as a fat filesystem, verbose output
+	sudo mkfs.vfat -v "$tinyGrubBlk"
+	sudo mount $BOOT_IMG $BOOT_IMG_DATA
+	sudo mkdir -p $BOOT_IMG_DATA/efi/boot
+	sudo $GRUB_INST_CMD --removable\
+		--directory=/usr/lib/grub/x86_64-efi\
+		--compress=xz\
+		--verbose\
+		--efi-directory="$BOOT_IMG_DATA"\
+		--boot-directory=$BOOT_IMG_DATA/boot\
+		--target=x86_64-efi\
+		--modules='part_gpt part_msdos iso9660 normal configfile fat exfat xzio btrfs terminal search serial'\
+		--force\
+		"$tinyGrubBlk"
 
+	mk_stub_grub_cfg $BOOT_IMG_DATA/boot/grub/grub.cfg
+	sudo umount $BOOT_IMG
+	sudo losetup -d "$tinyGrubBlk"
 }
 
 init_gpg
@@ -492,20 +501,15 @@ init_gpg
 download_flatcar_files "$FLATCAR_VER"
 
 # This is the standard grub file tree, we add in the grub.conf that will point the right files
-# If changes to grub timeout, serial console settings, autologin, kernel args, this is the spot for those
 if ! sudo $GRUB_INST_CMD --removable --efi-directory="." --boot-directory="./boot" --target=x86_64-efi --force
 then
 	echo "Grub Install failed"
 	exit 2
 fi
 
-mk_stub_grub_cfg
-mk_grub_cfg
 
-if [ $CREATE_EFI_IMG -eq 1 ]; then
-	echo "Creating images/efi.img"
-	efi_img_iso9660
-fi
+mk_grub_cfg
+efi_img_iso9660
 
 
 echo "Finished Creating"
