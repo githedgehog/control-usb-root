@@ -475,11 +475,57 @@ function efi_img_iso9660 {
 	-O x86_64-efi \
 	-p /boot/grub \
 	-o $BOOT_IMG_DATA/efi/boot/bootx64.efi \
-	normal search test fat part_gpt search_fs_uuid boot reboot probe \
-	xzio search search_label terminal configfile memdisk tar echo normal \
-	read btrfs serial linux efi_gop efi_uga efinet pgp http tftp tpm all_video \
-	fixvideo all_video gfxterm gfxmenu ls cat echo ext2 fat iso9660 loopback \
-	halt reboot ata
+	all_video \
+	boot \
+	btrfs \
+	cat \
+	chain \
+	configfile \
+	cpuid \
+	echo \
+	efifwsetup
+	efi_gop \
+	efinet \
+	efi_uga \
+	ext2 \
+	fat \
+	fixvideo \
+	gettext \
+	gfxmenu \
+	gfxterm \
+	halt \
+	help \
+	http \
+	iso9660 \
+	linux \
+	linuxefi
+	loadenv \
+	loopback \
+	ls \
+	lsefi \
+	memdisk \
+	normal \
+	part_gpt \
+	part_msdos \
+	pgp \
+	probe \
+	read \
+	reboot \
+	search \
+	search_fs_file \
+	search_fs_uuid \
+	search_label \
+	serial \
+	sleep \ 
+	smbios \
+	tar \
+	terminal \
+	test \
+	tftp \
+	tpm \
+	xfs
+	xzio
+
 
 	umount $BOOT_IMG_DATA
 	rm -rf $BOOT_IMG_DATA
