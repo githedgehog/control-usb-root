@@ -461,6 +461,63 @@ function efi_img_iso9660 {
 
 	local BOOT_IMG_DATA="./wip-dir"
 	local BOOT_IMG="images/efi.img"
+	local GRUB_MODULES="
+	all_video
+	boot
+	btrfs
+	cat
+	chain
+	configfile
+	cpuid
+	echo
+	efifwsetup
+	efi_gop
+	efinet
+	efi_uga
+	ext2
+	fat
+	fixvideo
+	gettext
+	gfxmenu
+	gfxterm
+	halt
+	help
+	http
+	iso9660
+	linux
+	loadenv
+	loopback
+	ls
+	lsefi
+	lsefisystab
+	lssal
+	memdisk
+	minicmd
+	normal
+	part_gpt
+	part_msdos
+	pgp
+	probe
+	read
+	reboot
+	search
+	search_fs_file
+	search_fs_uuid
+	search_label
+	serial
+	sleep
+	smbios
+	tar
+	terminal
+	test
+	true
+	video
+	tftp
+	tpm
+	xfs
+	xzio
+	"
+
 
 	mkdir -p $BOOT_IMG_DATA
 	mkdir -p $(dirname $BOOT_IMG)
@@ -475,56 +532,7 @@ function efi_img_iso9660 {
 	-O x86_64-efi \
 	-p /boot/grub \
 	-o $BOOT_IMG_DATA/efi/boot/bootx64.efi \
-	all_video \
-	boot \
-	btrfs \
-	cat \
-	chain \
-	configfile \
-	cpuid \
-	echo \
-	efifwsetup
-	efi_gop \
-	efinet \
-	efi_uga \
-	ext2 \
-	fat \
-	fixvideo \
-	gettext \
-	gfxmenu \
-	gfxterm \
-	halt \
-	help \
-	http \
-	iso9660 \
-	linux \
-	linuxefi
-	loadenv \
-	loopback \
-	ls \
-	lsefi \
-	memdisk \
-	normal \
-	part_gpt \
-	part_msdos \
-	pgp \
-	probe \
-	read \
-	reboot \
-	search \
-	search_fs_file \
-	search_fs_uuid \
-	search_label \
-	serial \
-	sleep \ 
-	smbios \
-	tar \
-	terminal \
-	test \
-	tftp \
-	tpm \
-	xfs
-	xzio
+	$GRUB_MODULES
 
 
 	umount $BOOT_IMG_DATA
