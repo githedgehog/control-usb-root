@@ -13,7 +13,7 @@ version:
 
 # Build control-usb-root
 build: && version
-  ./gen-control-usb-root.sh {{flatcar_version}}
+  ./gen-control-usb-root.sh {{flatcar_version}} 1
 
 
 # Publish control-usb-root
@@ -22,4 +22,4 @@ push: && version
 
 
 local-push:
-  oras push --plain-http 127.0.0.1:30000/githedgehog/fabricator/control-usb-root:v0000.0.0-hh-0 boot EFI images flatcar_production_*
+  oras push --plain-http 127.0.0.1:30000/githedgehog/fabricator/control-usb-root:v4230.2.1-hh-6 boot EFI images flatcar_production_*

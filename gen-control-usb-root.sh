@@ -476,10 +476,12 @@ function efi_img_iso9660 {
 	efi_uga
 	ext2
 	fat
+	font
 	fixvideo
 	gettext
 	gfxmenu
 	gfxterm
+	gzio
 	halt
 	help
 	http
@@ -489,6 +491,7 @@ function efi_img_iso9660 {
 	loopback
 	ls
 	lsefi
+	lsefimmap
 	lsefisystab
 	lssal
 	memdisk
