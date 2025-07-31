@@ -514,13 +514,13 @@ function efi_img_iso9660 {
 	terminal
 	test
 	true
+	udf
 	video
 	tftp
 	tpm
 	xfs
 	xzio
 	"
-
 
 	mkdir -p $BOOT_IMG_DATA
 	mkdir -p $(dirname $BOOT_IMG)
@@ -534,12 +534,38 @@ function efi_img_iso9660 {
 	-C xz \
 	-O x86_64-efi \
 	-p /boot/grub \
+	-c ./EFI/BOOT/grub.cfg
 	-o $BOOT_IMG_DATA/efi/boot/bootx64.efi \
 	$GRUB_MODULES
 
 
 	umount $BOOT_IMG_DATA
 	rm -rf $BOOT_IMG_DATA
+	#mk_stub_grub_cfg
+        #grub-script-check --verbose ./stub.cfg
+#
+#        # make a 12MB image 4096 bytes * 2,930 = 12MB. This amoung holds all the grub modules
+#        dd if=/dev/zero of=$BOOT_IMG bs=4k count=2930
+#        tinyGrubBlk=$(sudo losetup --find --show $BOOT_IMG)
+#
+#        sudo sgdisk -t 1:ef00 $tinyGrubBlk
+#        sudo mkfs.vfat $tinyGrubBlk
+#        sudo mount $BOOT_IMG $BOOT_IMG_DATA
+#        sudo mkdir -p $BOOT_IMG_DATA/efi/boot
+#
+#        sudo grub-mkimage \
+#        --compression xz \
+#        --format "x86_64-efi" \
+#        --directory "/usr/lib/grub/x86_64-efi" \
+#        --prefix "/boot/grub" \
+#        --config "./stub.cfg" \
+#        --output "$BOOT_IMG_DATA/efi/boot/bootx64.efi" \
+#        $GRUB_MODULES
+#
+#
+#        sudo umount $BOOT_IMG_DATA
+#        sudo rm -rf $BOOT_IMG_DATA
+
 
 }
 
@@ -559,10 +585,8 @@ fi
 mk_stub_grub_cfg
 mk_grub_cfg
 
-if [ $CREATE_EFI_IMG -eq 1 ]; then
-	echo "Creating images/efi.img"
-	efi_img_iso9660
-fi
+echo "Creating images/efi.img"
+efi_img_iso9660
 
 
 echo "Finished Creating"

@@ -22,4 +22,4 @@ push: && version
 
 
 local-push:
-  oras push --plain-http 127.0.0.1:30000/githedgehog/fabricator/control-usb-root:v4230.2.1-hh-6 boot EFI images flatcar_production_*
+  oras push --plain-http 127.0.0.1:30000/githedgehog/fabricator/control-usb-root:v4230.2.1-hh-13 boot EFI images flatcar_production_*
