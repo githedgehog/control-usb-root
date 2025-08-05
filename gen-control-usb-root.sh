@@ -419,6 +419,8 @@ function cleanup {
 	rm -rf "$tmp_dir"
 }
 
+# "HH-MEDIA" is the label that the iso is created with.
+# Keep this label matching that label. Not expected to change often.
 function mk_stub_grub_cfg {
         local output_path=$1
         sudo printf '# look for the filesystem by label to use as root device
@@ -469,20 +471,20 @@ function efi_img_iso9660 {
 	mkdir -p "$(dirname $BOOT_IMG)"
 
 
-	# 4096 * 2930 = 12MiB size image, loopback mount it
+	# 4096 * 2930 = 12MiB size image, 12MiB is the rounded up size of all the 
+	# grub modules plus the efi install. After its made, loopback mount it
 	dd if=/dev/zero of=$BOOT_IMG bs=4k count=2930
 	tinyGrubBlk=$(sudo losetup --find --show $BOOT_IMG)
 
 	# Give this image the ESP typecode
 	sudo sgdisk -t 0:ef00 "$tinyGrubBlk"
 	# Format the disk image as a fat filesystem, verbose output
-	sudo mkfs.vfat -v "$tinyGrubBlk"
+	sudo mkfs.vfat "$tinyGrubBlk"
 	sudo mount $BOOT_IMG $BOOT_IMG_DATA
 	sudo mkdir -p $BOOT_IMG_DATA/efi/boot
 	sudo $GRUB_INST_CMD --removable\
 		--directory=/usr/lib/grub/x86_64-efi\
 		--compress=xz\
-		--verbose\
 		--efi-directory="$BOOT_IMG_DATA"\
 		--boot-directory=$BOOT_IMG_DATA/boot\
 		--target=x86_64-efi\

@@ -27,7 +27,8 @@ The flatcar version number is saved in two files, `justfile` and the
 
 `gen-control-usb-root.sh` is intended to run on ubuntu, it uses the command
 `grub-install`. On Red Hat based distros this identical command is named
-`grub2-install`.
+`grub2-install`. Additionally the Red Hat  based distributions use `grub2` in
+the file paths, this subtle difference is irksome.
 
 
 ## Contents of this repo
@@ -35,8 +36,8 @@ The flatcar version number is saved in two files, `justfile` and the
 * `images/` - this directory contains a file, `efi.img`. That file is placed
   inside the root of the iso which is what allows us to boot an iso from a UEFI
 based system. `efi.img` is not expected to changed often. It is created via
-`efi_img_iso9660` in the `gen-control-usb-root.sh` the function is not run in
-the normal course of execution and is activated via flag.
+`efi_img_iso9660` in the `gen-control-usb-root.sh` the function is run in
+the normal course of execution.
 * `flatcar_production*` - these files are release artifacts downloaded from
   flatcar.org
 * `boot` - directory containing files needed to boot flatcar. This is generated
