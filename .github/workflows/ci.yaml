@@ -26,6 +26,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: install grub utilities
+        run: sudo apt-get install -y grub-efi grub2-common grub-efi-amd64-bin grub-efi-amd64
+
+      - name: install gdisk 
+        run: sudo apt-get install -y gdisk
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
