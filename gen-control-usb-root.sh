@@ -7,7 +7,7 @@
 # To update flacar image run this script supplying the verison you want
 # To update the images/efi.img file for some reason pass a valid flatcar version followed by a 1.
 
-FLATCAR_BASE_URL="https://stable.release.flatcar-linux.net/amd64-usr"
+FLATCAR_BASE_URL="https://beta.release.flatcar-linux.net/amd64-usr"
 FLATCAR_VER="${1:-"4230.2.1"}"
 GRUB_INST_CMD="grub-install"
 GPG_KEY="-----BEGIN PGP PUBLIC KEY BLOCK-----
