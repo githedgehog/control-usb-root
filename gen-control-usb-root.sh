@@ -8,7 +8,7 @@
 # To update the images/efi.img file for some reason pass a valid flatcar version followed by a 1.
 
 FLATCAR_BASE_URL="https://stable.release.flatcar-linux.net/amd64-usr"
-FLATCAR_VER="${1:-"4230.2.4"}"
+FLATCAR_VER="${1:-"4459.2.1"}"
 GRUB_INST_CMD="grub-install"
 GPG_KEY="-----BEGIN PGP PUBLIC KEY BLOCK-----
 
@@ -378,6 +378,7 @@ WXo7A5nj0plrH9Jn23wzGSTpf0QCApG55iOsKtrnvWTEGihjLFD9ccnMHb9AGQmG
 -----END PGP PUBLIC KEY BLOCK-----
 "
 
+CURL_ARGS=" --retry 5 --progress-bar --show-error --remote-name --retry-all-errors --location"
 function download_flatcar_files {
 	local version="$1"
 	files=( "flatcar_production_pxe.vmlinuz" 
@@ -386,9 +387,9 @@ function download_flatcar_files {
 	for file in "${files[@]}"
 	do
 		echo "Downloading $file"
-		curl --progress-bar --show-error --remote-name "$FLATCAR_BASE_URL/$version/$file"
+		curl ${CURL_ARGS} "$FLATCAR_BASE_URL/$version/$file"
 		# Get the gpg signature file to verify the download
-		curl --progress-bar --show-error --remote-name "$FLATCAR_BASE_URL/$version/$file.sig"
+		curl ${CURL_ARGS} "$FLATCAR_BASE_URL/$version/$file.sig"
 	done
 
 	for file in "${files[@]}"
@@ -405,7 +406,7 @@ function download_flatcar_files {
 function init_gpg {
 	GPGHOME=$(mktemp -d)
 	export GNUPGHOME="$GPGHOME"
-	gpg --quiet --import <<< "${GPG_KEY}"
+	gpg --batch --quiet --import <<< "${GPG_KEY}"
 }
 function cleanup {
 	local tmp_dir="$1"
