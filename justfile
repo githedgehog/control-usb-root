@@ -5,7 +5,7 @@ default:
 version_dirty := `[ -z "$(git status -s)" ] || echo "-$(date +"%H%M%S")"`
 version := `git describe --tags --dirty --always` + version_dirty
 
-flatcar_version := "4230.2.4"
+flatcar_version := "4459.2.1"
 
 # Print version that will be used in the build
 version:
