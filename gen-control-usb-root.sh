@@ -8,7 +8,7 @@
 # To update the images/efi.img file for some reason pass a valid flatcar version followed by a 1.
 
 FLATCAR_BASE_URL="https://stable.release.flatcar-linux.net/amd64-usr"
-FLATCAR_VER="${1:-"4459.2.2"}"
+FLATCAR_VER="${1:-"4459.2.3"}"
 GRUB_INST_CMD="grub-install"
 GPG_KEY="-----BEGIN PGP PUBLIC KEY BLOCK-----
 
