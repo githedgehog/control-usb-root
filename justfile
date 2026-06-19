@@ -36,5 +36,5 @@ iso-build:
 
 # Build and Push an iso
 iso-push: iso-build
-  oras push ghcr.io/githedgehog/fabricator/control-usb-root:{{version}} flatcar-{{flatcar_version}}.iso
+  oras push ghcr.io/githedgehog/fabricator/flatcar-nonSB-uefi-iso:{{version}} flatcar-{{flatcar_version}}.iso
 
