@@ -452,7 +452,7 @@ set timeout_style=menu
 set gfxpayload=keep
 insmod all_video
 
-menuentry 'Flatcar-live-media' --class gnu-linux --class gnu --class os {
+menuentry 'Flatcar-'"$FLATCAR_VER"'-live-media' --class gnu-linux --class gnu --class os {
 	linux /flatcar_production_pxe.vmlinuz flatcar.autologin flatcar.first_boot=1 console=ttyS0,115200n8 console=tty0
 	initrd /flatcar_production_pxe_image.cpio.gz /oem.cpio.gz
 }

@@ -32,6 +32,9 @@ jobs:
       - name: install grub utilities
         run: sudo apt-get install -y grub-efi grub2-common grub-efi-amd64-bin grub-efi-amd64
 
+      - name: install iso utilities
+        run: sudo apt-get install -y xorriso
+
       - name: install gdisk 
         run: sudo apt-get install -y gdisk
 
@@ -62,6 +65,7 @@ jobs:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
         run: |
           just --timestamp push
+          just --timestamp iso-push
 
       - name: Setup tmate session for debug
         if: ${{ failure() && github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
