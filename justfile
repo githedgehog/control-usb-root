@@ -32,7 +32,7 @@ iso-build:
   cp -r  images/efi.img iso_tree
   cp -r  flatcar_production_pxe* iso_tree
   sed -i -e 's/ *flatcar\.first_boot=1//g' -e 's# */oem\.cpio\.gz##g' ./iso_tree/boot/grub/grub.cfg
-  xorrisofs -eltorito-alt-boot -e 'efi.img' -no-emul-boot -append_partition 2 0xef ./iso_tree/efi.img -o flatcar-{{flatcar_version}}.iso ./iso_tree
+  xorrisofs -V 'flatcar-{{flatcar_version}}' -sysid 'LINUX' -eltorito-alt-boot -e 'efi.img' -no-emul-boot -append_partition 2 0xef ./iso_tree/efi.img -o flatcar-{{flatcar_version}}.iso ./iso_tree
 
 # Build and Push an iso
 iso-push: iso-build
