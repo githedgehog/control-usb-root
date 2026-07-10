@@ -55,3 +55,6 @@ the flatcar release number with the `hh` suffix.
 
 `oras pull ghcr.io/githedgehog/fabricator/flatcar-discovery:v4593.2.3-hh3`
 
+Attach the iso via virtual media to a system with UEFI and secure boot
+disabled.
+
