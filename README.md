@@ -44,3 +44,14 @@ the normal course of execution.
   by the `script control-usb-root.sh`
 * `EFI` - directory containing files needed to boot flatcar. This is generated
   by the `script control-usb-root.sh`
+
+
+## Pulling the ISO
+
+This repository also builds a flatcar iso without the fabric installer so it
+can be used to discover NIC names and other system features. `oras` is needed
+since this is a ghcr.io artifact. There is no latest tag. Its version follows
+the flatcar release number with the `hh` suffix.
+
+`oras pull ghcr.io/githedgehog/fabricator/flatcar-discovery:v4593.2.3-hh3`
+
