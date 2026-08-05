@@ -32,9 +32,9 @@ iso-build:
   cp -r  images/efi.img iso_tree
   cp -r  flatcar_production_pxe* iso_tree
   sed -i -e 's/ *flatcar\.first_boot=1//g' -e 's# */oem\.cpio\.gz##g' ./iso_tree/boot/grub/grub.cfg
-  xorrisofs -eltorito-alt-boot -e 'efi.img' -no-emul-boot -append_partition 2 0xef ./iso_tree/efi.img -o flatcar-{{flatcar_version}}.iso ./iso_tree
+  xorrisofs -eltorito-alt-boot -e 'efi.img' -no-emul-boot -append_partition 2 0xef ./iso_tree/efi.img -o flatcar-discovery-{{flatcar_version}}.iso ./iso_tree
 
 # Build and Push an iso
 iso-push: iso-build
-  oras push ghcr.io/githedgehog/fabricator/flatcar-discovery:{{version}} flatcar-{{flatcar_version}}.iso
+  oras push ghcr.io/githedgehog/fabricator/flatcar-discovery:{{version}} flatcar-discovery-{{flatcar_version}}.iso
 
